@@ -1,8 +1,11 @@
 const express = require("express");
-// const router = express.Router();
-// const router = require("./components/message/network");
+
+const db = require("./db");
+db(
+  "mongodb+srv://user:user123@telegrom-ohixc.mongodb.net/test?retryWrites=true&w=majority"
+);
+
 const router = require("./network/routes");
-// const response = require("./network/response");
 
 var app = express();
 
