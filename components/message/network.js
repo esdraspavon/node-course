@@ -1,10 +1,23 @@
 const express = require("express");
+const multer = require('multer')
 const router = express.Router();
 const controller = require("./controller");
 const response = require("../../network/response");
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, 'public/uploads/');
+  },
+  filename: function (req, file, cb) {
+      const [name, extension] = file.originalname.split('.');
+      cb(null, `${name}-${Date.now()}.${extension}`)
+  }
+})
+
+const upload = multer({ storage: storage });
+
 router.get("/", function(req, res) {
-  const filterMessages = req.query.user || null;
+  const filterMessages = req.query.chat || null;
   controller
     .getMessages(filterMessages)
     .then(messageList => {
@@ -14,9 +27,10 @@ router.get("/", function(req, res) {
       response.error(req, res, "Unexpected Error", 500, e);
     });
 });
-router.post("/", function(req, res) {
+router.post("/", upload.single('file'), function(req, res) {
+  console.log(req.file);
   controller
-    .addMessage(req.body.chat, req.body.user, req.body.message)
+    .addMessage(req.body.chat, req.body.user, req.body.message, req.file)
     .then(fullMessage => {
       response.success(req, res, fullMessage, 201);
     })

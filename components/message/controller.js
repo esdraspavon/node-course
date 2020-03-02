@@ -1,26 +1,31 @@
 const store = require("./store");
 
-function addMessage(chat, user, message) {
+function addMessage(chat, user, message, file) {
   return new Promise((resolve, reject) => {
     if (!user || !message || !chat) {
       console.error("[messageController] No hay chat, usuario o mensaje");
       reject("Los datos son incorrectos");
       return false;
     }
+    let fileUrl = '';
+    if (file) {
+      fileUrl = 'http://localhost:3000/app/uploads/' + file.filename;
+    }
     const fullMessage = {
       chat,
       user,
       message,
-      date: new Date()
+      date: new Date(),
+      file: fileUrl,
     };
     store.add(fullMessage);
     resolve(fullMessage);
   });
 }
 
-function getMessages(filterUser) {
+function getMessages(filterChat) {
   return new Promise((resolve, reject) => {
-    resolve(store.list(filterUser));
+    resolve(store.list(filterChat));
   });
 }
 
