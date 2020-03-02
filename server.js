@@ -1,17 +1,20 @@
 const express = require("express");
+const app = express();
+const server = require('http').Server(app);
+
+const socket = require('./socket');
 
 const db = require("./db");
-db(
-  "mongodb+srv://user:user123@telegrom-ohixc.mongodb.net/test?retryWrites=true&w=majority"
-);
+db("mongodb+srv://user:user123@telegrom-ohixc.mongodb.net/test?retryWrites=true&w=majority");
 
 const router = require("./network/routes");
 
-var app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // app.use(router);
+
+socket(server);
 
 router(app);
 
@@ -21,5 +24,6 @@ router(app);
 
 app.use("/app", express.static("public"));
 
-app.listen(3000);
-console.log("La aplicación esta escuchando en http://localhost:3000");
+server.listen(3000, function() {
+  console.log("La aplicación esta escuchando en http://localhost:3000");
+});
