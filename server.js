@@ -2,10 +2,16 @@ const express = require("express");
 const app = express();
 const server = require('http').Server(app);
 
+const config = require('./config');
+
+const cors = require('cors');
+
 const socket = require('./socket');
 
 const db = require("./db");
-db("mongodb+srv://user:user123@telegrom-ohixc.mongodb.net/test?retryWrites=true&w=majority");
+db(config.dbUrl);
+
+app.use(cors());
 
 const router = require("./network/routes");
 
@@ -22,8 +28,8 @@ router(app);
 //     res.send('Hola')
 // })
 
-app.use("/app", express.static("public"));
+app.use(config.publicRoute, express.static("public"));
 
-server.listen(3000, function() {
-  console.log("La aplicación esta escuchando en http://localhost:3000");
+server.listen(config.port, function() {
+  console.log(`La aplicación esta escuchando en ${config.host}:${config.port}`);
 });
